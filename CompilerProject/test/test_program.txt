@@ -11,7 +11,7 @@ cont := true
 resp := 357
 (cont) whileTrue:
 qtd := qtd + 1
-println("Digite um número maior que ",maiorQue," e menor que ",menorQue,".")
+println("Digite um nÃºmero maior que ",maiorQue," e menor que ",menorQue,".")
 input(palp)
 (palp = resp) ifTrue:
 cont := false
@@ -25,4 +25,4 @@ end
 end
 end
 end
-println("Você acertou o número em apenas ",qtd," tentativas")
+println("VocÃª acertou o nÃºmero em apenas ",qtd," tentativas")
