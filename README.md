@@ -35,3 +35,5 @@ end
 end
 println("Você acertou o número em apenas ",qtd," tentativas")
 ```
+
+I dont have any documentation about the language...
