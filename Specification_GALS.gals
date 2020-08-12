@@ -1,0 +1,174 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = Stream
+Parser = LL
+#RegularDefinitions
+letra: [A-Za-z]
+digito: [0-9]
+caracter: [A-Za-z0-9]
+constante_inteira: "0" | ([1-9][0-9]*)
+espaco_extra: (" " | \n | \t)*
+
+#Tokens
+
+ : {espaco_extra}*
+identificador : {letra}({caracter}? ("_"{caracter})?)*"_"?
+constante_inteira: {constante_inteira}
+constante_real: {constante_inteira}","[0-9]+
+constante_caractere: \"([^\n\"\\] | \\\" | \\\\)*\"
+:! \\\\[^\n]*
+:! "\*"([^"*"] | "*"+[^"*""\"])*"*"+"\"
+
+
+// palavras reservadas
+bool = identificador : "bool"
+consts   = identificador : "consts"
+def    = identificador : "def"
+end  = identificador : "end"
+execute  = identificador : "execute"
+false = identificador : "false"
+float    = identificador : "float"
+int    = identificador : "int"
+get = identificador : "get"
+ifFalse = identificador : "ifFalse"
+ifTrue = identificador : "ifTrue"
+input = identificador : "input"
+print = identificador : "print"
+println = identificador : "println"
+set = identificador : "set"
+str = identificador : "str"
+true = identificador : "true"
+types = identificador : "types"
+var = identificador : "var"
+whileFalse = identificador : "whileFalse"
+whileTrue = identificador : "whileTrue"
+
+// simbolos especiais
+"("
+")"
+"="
+":"
+":="
+","
+"&&"
+"||"
+"!="
+"<"
+"<="
+">"
+">="
+"*"
+"+"
+"-"
+"!"
+"/"
+#NonTerminals
+<programa>
+<def_tipos>
+<tipos>
+<simples>
+<composto>
+<lista_de_campos>
+<campo>
+<lista_identificadores>
+<def_constantes>
+<constante_logica>
+<valor>
+<def_variaveis>
+<lista_comandos>
+<fat_at_ou_mtc>
+<fat_lista_comandos>
+<fat_li_com>
+<fat_atribuicao_e_man_tipos_compostos>
+<atribuicao>
+<fat_campos>
+<fat_lista_identificadores>
+<man_tipos_compostos>
+<and_equal>
+<entrada_dados>
+<lista_expressao>
+<fat_lista_expressao>
+<fat_sel_ou_rep>
+<fat_selecao_ou_repeticao>
+<saída_dados>
+<while_true_while_false>
+<selecao>
+<repeticao>
+<reptipos>
+<optional_false>
+<params_if>
+<repconsts>
+<repvar>
+<tiposvar>
+<expressão>
+<fat_exp>
+<elemento>
+<relacional>
+<operador_relacional>
+<aritmética>
+<termo>
+<fat_ari>
+<fat_aritmética>
+<fator>
+<fat_termo>
+<fat_identificador>
+#Grammar
+<programa> ::=  #15 def <def_tipos><def_constantes><def_variaveis> execute <lista_comandos> #16;
+<def_tipos> ::= types identificador ":" <tipos> <reptipos> | î;
+<reptipos> ::=  î | identificador ":" <tipos> <reptipos>;
+<tipos> ::= <simples> | <composto>;
+<simples> ::= int | float | str | bool;
+<composto> ::= "(" <lista_de_campos> ")";
+<lista_de_campos> ::= <campo><fat_campos>;
+<fat_campos> ::= î | <lista_de_campos>;
+<campo> ::= identificador ":" <simples>;
+<lista_identificadores> ::= identificador #22 <fat_lista_identificadores>;
+<fat_lista_identificadores> ::= "," <lista_identificadores> | î;
+<def_constantes> ::=  consts <lista_identificadores> "=" <valor> #32 <repconsts> | î;
+<constante_logica> ::= true | false;
+<valor> ::= constante_inteira | constante_caractere  | constante_real | <constante_logica>;
+<def_variaveis> ::= var <lista_identificadores> ":" <tiposvar> #21 #23 <repvar> | î;
+<lista_comandos> ::= <fat_lista_comandos><fat_li_com>;
+<fat_li_com> ::= î | <lista_comandos>;
+<fat_lista_comandos> ::= <fat_atribuicao_e_man_tipos_compostos> | <entrada_dados> | <saída_dados> | <fat_selecao_ou_repeticao>;
+<fat_atribuicao_e_man_tipos_compostos> ::= identificador #22 <fat_at_ou_mtc>;
+<fat_at_ou_mtc> ::= <atribuicao> | <man_tipos_compostos>; 
+<atribuicao> ::= ":=" <expressão> #26;
+<man_tipos_compostos> ::= set "(" identificador "," <expressão> ")";
+<entrada_dados> ::= input "(" <lista_identificadores> #24 ")";
+<lista_expressao> ::= <expressão> #14 <fat_lista_expressao>;
+<fat_lista_expressao> ::= "," <lista_expressao> | î;
+
+<saída_dados> ::= print "(" <lista_expressao> ")" | println "(" <lista_expressao> ")" #17;
+<while_true_while_false> ::= whileTrue | whileFalse;
+<fat_selecao_ou_repeticao> ::= #27 "(" <expressão> ")"<fat_sel_ou_rep>;
+<fat_sel_ou_rep> ::= <selecao> | <repeticao>;
+<selecao> ::= ifFalse #28 <params_if> end #29 | ifTrue #28 <params_if> <optional_false> end #29;
+<params_if> ::= ":" <lista_comandos>;
+<optional_false> ::= #30 ifFalse ":" <lista_comandos> | î;
+<repeticao> ::= <while_true_while_false> #28 ":" <lista_comandos> end #31;
+<repconsts> ::= î | <lista_identificadores> "=" <valor> #32 <repconsts>;
+<repvar> ::= î | <lista_identificadores> ":" <tiposvar> #21 #23 <repvar>;
+<tiposvar> ::= <simples> | identificador;
+<expressão> ::= <elemento><fat_exp>;
+<fat_exp> ::= î | "&&"<elemento> #18 <fat_exp> | "||"<elemento> #19 <fat_exp>;
+
+<elemento> ::= <relacional> | true  #11 | false  #12 | "!" <elemento> #13;
+<relacional> ::= <aritmética> <fat_ari>;
+<fat_ari> ::= <operador_relacional> #9 <aritmética> #10 | î;
+<operador_relacional> ::= "=" | "!=" | "<" | "<=" | ">" | ">=";
+<aritmética> ::= <termo> <fat_aritmética>;
+<fat_aritmética> ::= î | "+"<termo> #1 <fat_aritmética>  | "-"<termo> #2 <fat_aritmética>;
+<termo> ::= <fator> <fat_termo>;
+<fat_termo> ::= î | "*"<fator> #3 <fat_termo> | "/"<fator> #4 <fat_termo>;
+
+<fator> ::= identificador #25 <fat_identificador> | constante_inteira #5 | constante_real #6 | constante_caractere #20 | "(" <expressão> ")" | "+" <fator> #7 | "-" <fator> #8;
+<fat_identificador> ::= î | get "(" identificador ")";
+
