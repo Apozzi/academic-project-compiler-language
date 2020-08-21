@@ -39,5 +39,5 @@ println("Você acertou o número em apenas ",qtd," tentativas")
 ```
 
 I dont have any documentation about the language.
-Used http://gals.sourceforge.net for creation of Lexical and Sematic analisation rules and creation of the parse tree.
+Used http://gals.sourceforge.net for creation of Lexical and Sematic analisation rules and creation of the parse tree..
 
